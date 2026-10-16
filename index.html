@@ -10,5 +10,10 @@
 <body>
 <div id="app" aria-live="polite"></div>
 <script src="app.js?v=14" defer></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
+}
+</script>
 </body>
 </html>

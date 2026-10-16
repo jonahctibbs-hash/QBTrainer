@@ -4,12 +4,14 @@
   --muted: #495057; --border: #d3d3d3; --accent: #2E7CF6; --on-accent: #ffffff;
   --correct: #009873; --wrong: #e74c3c; --power: #fd7e14; --shadow: rgba(0,0,0,.08);
   --track: rgba(0,0,0,.10);
+  --hover-bg: #000000; --hover-fg: #ffffff;
 }
 body.dark {
   --bg: #222222; --surface: #222222; --surface2: #2b3035; --text: #e0e0e0;
   --muted: #9ba0a6; --border: #495057; --accent: #6699FF; --on-accent: #0d1220;
   --correct: #00bc8c; --wrong: #e74c3c; --power: #fd7e14; --shadow: rgba(0,0,0,.4);
   --track: rgba(255,255,255,.14);
+  --hover-bg: transparent; --hover-fg: #ffffff;
 }
 * { box-sizing: border-box; }
 html, body { height: 100%; }
@@ -67,11 +69,11 @@ input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 
 /* hover and keyboard cursor look identical: keep outline-vs-fill shape, but
    the accent color becomes straight white, and the tile grows */
 .tile:hover, .tile.kb-cursor {
-  border-color: #ffffff; color: #ffffff;
+  background: var(--hover-bg); border-color: #ffffff; color: var(--hover-fg);
   transform: scale(1.06); position: relative; z-index: 1;
   box-shadow: 0 2px 10px var(--shadow);
 }
-.tile.selected:hover, .tile.selected.kb-cursor { background: #ffffff; color: #111111; }
+.tile.selected:hover, .tile.selected.kb-cursor { background: var(--hover-fg); color: var(--hover-bg); }
 /* wide screens: the 1.06 grow feels too big, dial it back */
 @media (min-width: 720px) {
   .tile:hover, .tile.kb-cursor { transform: scale(1.02); }
