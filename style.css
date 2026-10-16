@@ -4,7 +4,7 @@
   --muted: #495057; --border: #d3d3d3; --accent: #2E7CF6; --on-accent: #ffffff;
   --correct: #009873; --wrong: #e74c3c; --power: #fd7e14; --shadow: rgba(0,0,0,.08);
   --track: rgba(0,0,0,.10);
-  --hover-bg: #000000; --hover-fg: #ffffff; --hover-border: #000000;
+  --hover-bg: transparent; --hover-fg: #111111; --hover-border: #000000;
 }
 body.dark {
   --bg: #222222; --surface: #222222; --surface2: #2b3035; --text: #e0e0e0;
@@ -13,6 +13,9 @@ body.dark {
   --track: rgba(255,255,255,.14);
   --hover-bg: transparent; --hover-fg: #ffffff; --hover-border: #ffffff;
 }
+/* filled (selected) tiles on hover: black fill/white text in light, white fill/black text in dark */
+body:not(.dark) .tile.selected:hover, body:not(.dark) .tile.selected.kb-cursor { background: #000000; color: #ffffff; border-color: #000000; }
+body.dark .tile.selected:hover, body.dark .tile.selected.kb-cursor { background: #ffffff; color: #111111; }
 * { box-sizing: border-box; }
 html, body { height: 100%; }
 body {
@@ -73,8 +76,7 @@ input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 
   transform: scale(1.06); position: relative; z-index: 1;
   box-shadow: 0 2px 10px var(--shadow);
 }
-/* filled (selected) tiles invert on hover in both modes: white fill, black text */
-.tile.selected:hover, .tile.selected.kb-cursor { background: #ffffff; color: #111111; }
+
 /* wide screens: the 1.06 grow feels too big, dial it back */
 @media (min-width: 720px) {
   .tile:hover, .tile.kb-cursor { transform: scale(1.02); }

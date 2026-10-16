@@ -1,11 +1,11 @@
 /* QB Trainer service worker: offline cache + update check */
-const CACHE = 'qbtrainer-v16';
+const CACHE = 'qbtrainer-v17';
 
 const PRECACHE = [
   './',
   './index.html',
-  './app.js?v=16',
-  './style.css?v=16',
+  './app.js?v=17',
+  './style.css?v=17',
   './questions.json'
 ];
 
