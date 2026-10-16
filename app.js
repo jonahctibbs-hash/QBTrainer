@@ -364,7 +364,18 @@ function applyHomeCursor() {
   }
   homeCursor = Math.max(0, Math.min(homeCursor, homeTiles.length - 1));
   homeTiles.forEach((t, i) => t.el.classList.toggle("kb-cursor", i === homeCursor));
-  homeTiles[homeCursor].el.scrollIntoView({ block: "nearest" });
+  ensureTileVisible(homeTiles[homeCursor].el);
+}
+/* scrollIntoView('nearest') ignores the few extra pixels the hovered tile
+   grows by, so a keyboard jump would clip the scaled edge. Scroll manually
+   with a margin big enough for the scale + shadow. */
+function ensureTileVisible(el) {
+  const sc = document.getElementById("pickerScroll");
+  if (!sc) return;
+  const sr = sc.getBoundingClientRect(), r = el.getBoundingClientRect();
+  const M = 8;
+  if (r.top - M < sr.top) sc.scrollTop += r.top - M - sr.top;
+  else if (r.bottom + M > sr.bottom) sc.scrollTop += r.bottom + M - sr.bottom;
 }
 function moveHomeCursor(d) {
   if (!homeTiles.length) return;
