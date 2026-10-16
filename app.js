@@ -1,4 +1,4 @@
-/* QB Trainer web app — offline-capable static port of the Android app. */
+/* QB Trainer — offline-capable static web app. */
 "use strict";
 
 const CAT_ORDER = ["Literature","History","Science","Fine Arts","Religion","Mythology","Philosophy","Social Science","Current Events","Geography","Other Academic","Pop Culture"];
@@ -183,7 +183,7 @@ const alternatesByCategory = () => {
   return m;
 };
 
-/* ---------- round generation (port of the Android engine) ---------- */
+/* ---------- round generation ---------- */
 function buildRound(selectedKeys, count) {
   const bs = buckets.filter(b => selectedKeys.has(b.category + "|" + b.subKey));
   if (!bs.length) return [];

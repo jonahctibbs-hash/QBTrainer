@@ -1,26 +1,42 @@
-# QB Trainer — Web version (GitHub Pages)
+# QB Trainer
 
-A static, dependency-free port of the Android app. Everything runs client-side;
-`questions.json` ships with the site, so it also works offline once loaded.
+A fast, offline-capable quiz bowl trainer built on real qbreader tossups.
+Everything runs client-side in the browser; `questions.json` ships with the
+site, so it also works offline once loaded.
 
-## Deploy to GitHub Pages
+Live site: https://jonahctibbs-hash.github.io/QBTrainer/
 
-1. Create a GitHub repository (e.g. `qb-trainer`).
-2. Copy the contents of this `webapp/` folder into the repo root:
-   `index.html`, `style.css`, `app.js`, `questions.json`, `.nojekyll`
-   (`.nojekyll` prevents GitHub from running Jekyll, which would choke on the
-   large JSON file's underscores).
-3. Repo → Settings → Pages → Source: "Deploy from a branch" → branch `main`,
-   folder `/ (root)` → Save.
-4. Your site is live at `https://<username>.github.io/qb-trainer/` within a
-   minute or two.
+## How it works
 
-To update the question data later: run `fetch_qbreader.py` from the project
-root (top 100 answers per bucket, 10 strict-matched tossups each, threaded),
-then `_build_tools/backfill_questions.py` to top up underfilled answers, then
-`_build_tools/build_distractors.py` to regenerate close distractors (it applies
-the hand-authored overrides in `_build_tools/manual_distractors*.py`).
-`webapp/test_core.js` smoke-tests the app logic afterwards.
+- 35,000+ real qbreader tossups, strict main-answer matching, 55
+  category/subcategory/alternate buckets, top 100 frequency-ranked answers
+  each (selectable at runtime).
+- **Close distractors**: each answer has a precomputed ranked list of
+  confusable distractors (same answer type + shared tokens within the same
+  category, plus hand-authored sets), with randomized variety per question.
+- qbreader-inspired styling with dark/light themes.
+- Word-by-word reader with speed control, pause, reveal-all, power `(*)`
+  highlighting, and auto-scroll.
+- Four always-visible choices.
+- Adjustable rounds; play-another-round.
+- Adaptive weighting from your right/wrong history (localStorage).
+- Stats page: study recommendations ("Study these →" applies them),
+  per-subcategory accuracy bars, weakest answers, and star/trophy badges
+  (85%+ accuracy over 10+ attempts).
+
+## Keybinds
+
+Every binding is editable on the in-app **Keybinds** page (`K` from home).
+
+- **All pages**: Esc back/exit
+- **Home**: S stats · K keybinds · A select all · C clear · T theme ·
+  Enter start round · arrows navigate tiles and sliders · Space check/uncheck
+  (on a slider: Space enters edit mode, ←/→ adjust, Space confirms)
+- **Questions**: 1–4 select · P pause · A reveal all · ↑/↓ move · Enter submit ·
+  Esc exit
+- **Round complete**: Enter play again · Esc done
+- **Stats**: S study these
+- Gamepad also works: A select/next, B pause, Y reveal, D-pad move.
 
 ## Settings
 
@@ -28,39 +44,25 @@ the hand-authored overrides in `_build_tools/manual_distractors*.py`).
   frequency-ranked answers are eligible for questions (default 30).
 - Round length (5–40) and reading speed (100–600 wpm).
 
-You can also run it locally: `python -m http.server` inside `webapp/`, then
-open http://localhost:8000.
+## Deploying (GitHub Pages)
 
-## Features (parity with the Android app)
+The site is published from this folder's contents (repo root):
+`index.html`, `style.css`, `app.js`, `questions.json`, `.nojekyll`
+(`.nojekyll` prevents GitHub from running Jekyll, which would choke on the
+large JSON file's underscores).
 
-- 35,000+ real qbreader tossups, strict main-answer matching, 55
-  category/subcategory/alternate buckets, top 100 answers each (slider
-  selectable at runtime).
-- **Close distractors**: each answer has a precomputed ranked list of
-  confusable distractors (same answer type + shared tokens within the same
-  category, plus hand-authored sets), with randomized variety per question.
-- qbreader-inspired styling with dark/light themes.
-- **Two layouts**: *Vertical* (phone-style: Categories → Subcategories →
-  Alternate subcategories sections, stacked answer buttons) and *Horizontal*
-  (desktop qbreader-style: Categories column with the selected category's
-  Subcategories / Alternate subcategories in columns beside it, answers in a
-  2×2 grid). Toggle from the home screen.
-- Word-by-word reader with speed control, pause, reveal-all, power `(*)`
-  highlighting, and auto-scroll.
-- Four always-visible choices with type-matched distractors (same answer type
-  preferred — country→country, author→author — within the same category).
-- Adjustable rounds; play-another-round; difficulty filtering.
-- Round-complete page: per-answer results color-coded, weakest answers with
-  their subcategory (wraps to a second line when tight).
-- Adaptive weighting from your right/wrong history (localStorage).
-- Stats screen: study recommendations ("Study these →" applies them),
-  per-subcategory accuracy bars, weakest answers, and star/trophy badges
-  (85%+ accuracy over 10+ attempts).
-- Keyboard: 1–4 select, Space pause, Y reveal, arrows move, Enter submit.
-  Gamepad: A select/next, B pause, Y reveal, D-pad move.
+1. Repo → **Settings** → left sidebar **"Pages"** (under "Code and automation").
+2. Under **"Build and deployment"**, set **Source** to **"Deploy from a branch"**.
+3. Branch: `main`, folder: `/ (root)` → **Save**.
+4. The site builds within a minute or two; the URL appears at the top of that
+   same Pages settings page.
+
+To update: change files, bump the `?v=N` cache-busters in `index.html` when
+`app.js`/`style.css` change, commit, and push — Pages redeploys automatically.
 
 ## Notes
 
 - Progress is stored in each browser's localStorage; it is per-browser, not
   synced between devices.
-- The web app and the Android app keep separate stats.
+- To develop locally: `python _build_tools/serve.py` from the project root,
+  then open http://localhost:8613/webapp/index.html (caching disabled).
