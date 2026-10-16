@@ -91,8 +91,27 @@ let buckets = [];            // {category, subKey, alternate, topAnswers, types,
 let distractorsByCat = {}, distractorsBySub = {}, closeBySub = {}, answerTypes = {}, typedIndex = {};
 const categoriesSet = () => new Set(buckets.map(b => b.category));
 
+// bump whenever questions.json is regenerated — the data is cached in the
+// browser's Cache Storage keyed by this version, so repeat visits don't
+// re-download ~10 MB of (gzipped) JSON
+const DATA_VERSION = "d4-slim-1";
 async function loadData() {
-  DATA = await (await fetch("questions.json")).json();
+  let data = null;
+  try {
+    const cache = await caches.open("qb-data-" + DATA_VERSION);
+    const hit = await cache.match(new Request("questions.json"));
+    if (hit) data = await hit.json();
+  } catch {}
+  if (!data) {
+    data = await (await fetch("questions.json")).json();
+    try {
+      const cache = await caches.open("qb-data-" + DATA_VERSION);
+      await cache.put(new Request("questions.json"), new Response(JSON.stringify(data)));
+      // drop caches from older data versions
+      caches.keys().then(ks => ks.filter(k => k.startsWith("qb-data-") && k !== "qb-data-" + DATA_VERSION).forEach(k => caches.delete(k)));
+    } catch {}
+  }
+  DATA = data;
   buckets = []; distractorsByCat = {}; distractorsBySub = {}; closeBySub = {}; answerTypes = {}; typedIndex = {};
   answerTypes = DATA.answer_types || {};
   for (const [cat, ce] of Object.entries(DATA.categories)) {
@@ -858,7 +877,10 @@ function pollGamepad() {
 /* ---------- boot ---------- */
 (async () => {
   applyTheme();
+  $app().innerHTML = `<div style="padding:40px 8px;color:var(--muted);font-size:14px">Loading questions\u2026${" "}<span id="loadNote"></span></div>`;
+  const note = setInterval(() => { const n = document.getElementById("loadNote"); if (n) n.textContent = "(first visit downloads the question set; after that it's stored on your device)"; }, 0);
   await loadData();
+  clearInterval(note);
   buckets.forEach(b => { if (!b.alternate && b.category !== "Literature") DEFAULT_SUB_SCOPED.add(b.category + "|" + b.subKey); });
   render();
   requestAnimationFrame(pollGamepad);
