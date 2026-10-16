@@ -644,7 +644,7 @@ function renderStats() {
 
   const root = document.createElement("div");
   root.innerHTML = `
-    <div class="row"><button class="textbtn" id="btnBack">← Back</button></div>
+    <div class="row"><button class="textbtn" id="btnBack">← Back</button><span class="spacer"></span><button class="textbtn" id="btnResetStats" style="color:var(--wrong)">Reset stats</button></div>
     <h1>Stats</h1>
     <div class="muted">${totals.c + totals.w ? `Overall: ${totals.c} / ${totals.c + totals.w} correct (${Math.round(totals.c * 100 / (totals.c + totals.w))}%)` : "No attempts yet — play a round!"}</div>
     <div class="stats-cols">
@@ -665,6 +665,12 @@ function renderStats() {
   `;
   $app().replaceChildren(root);
   root.querySelector("#btnBack").onclick = () => navigate("home");
+  root.querySelector("#btnResetStats").onclick = () => {
+    if (!confirm("Reset ALL stats? This permanently deletes your accuracy history, badges, and recommendations.")) return;
+    statsData = {};
+    LS.set("stats", statsData);
+    render();
+  };
   const st = root.querySelector("#btnStudy");
   if (st) st.onclick = () => {
     // select exactly the recommended subcategories and immediately start a round
